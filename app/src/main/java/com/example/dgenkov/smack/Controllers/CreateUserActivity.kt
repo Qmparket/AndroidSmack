@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.example.dgenkov.smack.R
 import com.example.dgenkov.smack.Services.AuthService
+import com.example.dgenkov.smack.Services.UserDataService
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -54,12 +55,24 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserClicked (view:View) {
+        val userName = createUsernameText.text.toString()
         val email = createEmailText.text.toString()
         val password = createPasswordText.text.toString()
 
         AuthService.registerUser(this, email, password) { registerSuccess ->
             if (registerSuccess) {
-
+                AuthService.loginUser(this,email,password) { loginSuccess ->
+                    if(loginSuccess) {
+                        AuthService.createUser(this,userName,email,userAvatar,avatarColor) {createUserSuccess ->
+                            if(createUserSuccess) {
+                                println(UserDataService.avatarName)
+                                println(UserDataService.avatarColor)
+                                println(UserDataService.name)
+                                finish()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
