@@ -54,14 +54,15 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserClicked (view:View) {
+        val email = createEmailText.text.toString()
+        val password = createPasswordText.text.toString()
 
-        println("@createUser")
-
-        AuthService.registerUser(this, "j@j.com", "test123") { complete ->
-            if (complete) {
+        AuthService.registerUser(this, email, password) { registerSuccess ->
+            if (registerSuccess) {
 
             }
         }
-
     }
+
 }
+
