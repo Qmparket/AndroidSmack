@@ -1,9 +1,11 @@
-package com.example.dgenkov.smack
+package com.example.dgenkov.smack.Controllers
 
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.example.dgenkov.smack.R
+import com.example.dgenkov.smack.Services.AuthService
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -51,7 +53,15 @@ class CreateUserActivity : AppCompatActivity() {
 
     }
 
-    fun createUserClicked(view:View) {
+    fun createUserClicked (view:View) {
+
+        println("@createUser")
+
+        AuthService.registerUser(this, "j@j.com", "test123") { complete ->
+            if (complete) {
+
+            }
+        }
 
     }
 }
