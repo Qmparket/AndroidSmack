@@ -74,6 +74,6 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:id="@+id/createSpinner"
-            app:layout_constraintHorizontal_bias="0.498" android:layout_marginBottom="8dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/textView2"/>
 </android.support.constraint.ConstraintLayout>

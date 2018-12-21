@@ -80,14 +80,17 @@ class CreateUserActivity : AppCompatActivity() {
                                     enableSpinner(false)
                                     finish()
                                 } else {
+                                    enableSpinner(false)
                                     errorToast()
                                 }
                             }
                         } else {
+                            enableSpinner(false)
                             errorToast()
                         }
                     }
                 } else {
+                    enableSpinner(false)
                     errorToast()
                 }
             }
