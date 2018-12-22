@@ -47,8 +47,6 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this,"Please enter your email and password",Toast.LENGTH_LONG).show()
             enableSpinner(false)
         }
-
-
     }
 
     fun errorToast() {
