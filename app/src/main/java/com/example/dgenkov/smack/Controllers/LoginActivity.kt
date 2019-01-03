@@ -1,9 +1,13 @@
 package com.example.dgenkov.smack.Controllers
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.dgenkov.smack.R
 import com.example.dgenkov.smack.Services.AuthService
@@ -25,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
         val email = loginEmailText.text.toString()
         val password = loginPasswordText.text.toString()
-
+        hideKeyboard()
         if(email.isNotEmpty() && password.isNotEmpty()) {
             AuthService.loginUser(this,email,password) {loginSuccess ->
                 if(loginSuccess) {
@@ -69,5 +73,11 @@ class LoginActivity : AppCompatActivity() {
         val signupIntent = Intent(this, CreateUserActivity::class.java)
         startActivity(signupIntent)
         finish()
+    }
+
+    fun hideKeyboard() {
+        val view: View = if (currentFocus == null) View(this) else currentFocus
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
