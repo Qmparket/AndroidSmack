@@ -16,12 +16,15 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.example.dgenkov.smack.Model.Channel
 import com.example.dgenkov.smack.R
 import com.example.dgenkov.smack.Services.AuthService
+import com.example.dgenkov.smack.Services.MessageService
 import com.example.dgenkov.smack.Services.UserDataService
 import com.example.dgenkov.smack.Utilities.BROADCAST_USER_DATA_CHANGE
 import com.example.dgenkov.smack.Utilities.SOCKET_URL
 import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
@@ -51,6 +54,8 @@ class MainActivity : AppCompatActivity() {
         hideKeyboard()
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(
             BROADCAST_USER_DATA_CHANGE))
+        socket.connect()
+        socket.on("channelCreated", onNewChannel )
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
@@ -61,19 +66,9 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
     }
 
-    override fun onResume() {
-        super.onResume()
-        socket.connect()
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-    }
-
     override fun onDestroy() {
         socket.disconnect()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
         super.onDestroy()
 
     }
@@ -145,6 +140,22 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 .show()
+        }
+    }
+
+    private val onNewChannel = Emitter.Listener { args ->
+        //println(args[0] as String)
+        runOnUiThread {
+            val channelName = args[0] as String
+            val channelDescription = args[1] as String
+            val channelId = args[2] as String
+
+            val newChannel = Channel(channelName,channelDescription,channelId)
+            MessageService().channels.add(newChannel)
+
+            println(newChannel.name)
+            println(newChannel.description)
+            println(newChannel.id)
         }
     }
 
