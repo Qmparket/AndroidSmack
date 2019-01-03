@@ -1,6 +1,7 @@
 package com.example.dgenkov.smack.Services
 
 import android.graphics.Color
+import com.example.dgenkov.smack.Controllers.App
 import java.util.*
 
 object UserDataService {
@@ -37,8 +38,8 @@ object UserDataService {
         name = ""
         email = ""
 
-        AuthService.authToken = ""
-        AuthService.userEmail = ""
-        AuthService.isLoggedIn = false
+        App.prefs.authToken = ""
+        App.prefs.userEmail = ""
+        App.prefs.isLoggedIn = false
     }
 }
