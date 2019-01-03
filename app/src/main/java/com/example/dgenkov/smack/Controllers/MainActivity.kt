@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -15,6 +16,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.example.dgenkov.smack.Model.Channel
 import com.example.dgenkov.smack.R
@@ -36,15 +38,26 @@ class MainActivity : AppCompatActivity() {
     val socket = IO.socket(SOCKET_URL)
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(context: Context, intent: Intent?) {
 
             if(AuthService.isLoggedIn) {
                 when (intent?.action) {
                     BROADCAST_USER_DATA_CHANGE -> handleUserDataChange()
                 }
+                MessageService.getChannels(context) { complete ->
+                    if(complete) {
+                        channelAdapter.notifyDataSetChanged()
+                    }
+                }
             }
-
         }
+    }
+
+    lateinit var channelAdapter: ArrayAdapter<Channel>
+
+    private fun setupAdapters() {
+        channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
+        channel_list.adapter = channelAdapter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+        setupAdapters()
     }
 
     override fun onDestroy() {
@@ -112,6 +126,8 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             val loginIntent = Intent(this, LoginActivity::class.java)
+            MessageService.channels.clear()
+            channelAdapter.notifyDataSetChanged()
             startActivity(loginIntent)
         }
     }
@@ -151,11 +167,10 @@ class MainActivity : AppCompatActivity() {
             val channelId = args[2] as String
 
             val newChannel = Channel(channelName,channelDescription,channelId)
-            MessageService().channels.add(newChannel)
+            MessageService.channels.add(newChannel)
 
-            println(newChannel.name)
-            println(newChannel.description)
-            println(newChannel.id)
+            channelAdapter.notifyDataSetChanged()
+            channelAdapter.clear()
         }
     }
 
