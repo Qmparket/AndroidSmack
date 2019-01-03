@@ -20,6 +20,8 @@ import com.example.dgenkov.smack.R
 import com.example.dgenkov.smack.Services.AuthService
 import com.example.dgenkov.smack.Services.UserDataService
 import com.example.dgenkov.smack.Utilities.BROADCAST_USER_DATA_CHANGE
+import com.example.dgenkov.smack.Utilities.SOCKET_URL
+import io.socket.client.IO
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
@@ -27,6 +29,8 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 class MainActivity : AppCompatActivity() {
 
     val regex = Regex("(\\d+)(\\.?)(\\d*)")
+
+    val socket = IO.socket(SOCKET_URL)
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -55,6 +59,23 @@ class MainActivity : AppCompatActivity() {
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        socket.connect()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+    }
+
+    override fun onDestroy() {
+        socket.disconnect()
+        super.onDestroy()
+
     }
 
     fun handleUserDataChange() {
@@ -115,6 +136,8 @@ class MainActivity : AppCompatActivity() {
                     val channelDesc = descTextField.text.toString()
 
                     //create channel with the channel name and description
+                    socket.emit("newChannel", channelName, channelDesc)
+
                     hideKeyboard()
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
@@ -126,7 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendMessageButtonClicked(view: View) {
-
+        hideKeyboard()
     }
 
     fun hideKeyboard() {
